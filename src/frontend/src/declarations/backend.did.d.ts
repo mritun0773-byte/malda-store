@@ -10,112 +10,60 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
-export type GroceryCategory = { 'bakery' : null } |
-  { 'meatAndSeafood' : null } |
-  { 'dairyAndEggs' : null } |
-  { 'beverages' : null } |
-  { 'produce' : null };
-export interface Order {
-  'id' : string,
-  'status' : OrderStatus,
-  'deliveryAddress' : string,
-  'createdAt' : Time,
-  'totalAmount' : bigint,
-  'customerId' : Principal,
-  'stripePaymentIntentId' : string,
-  'isCOD' : boolean,
-  'items' : Array<OrderItem>,
-}
-export interface OrderItem {
-  'productId' : string,
-  'quantity' : bigint,
-  'priceAtOrder' : bigint,
-}
-export type OrderStatus = { 'cancelled' : null } |
-  { 'delivering' : null } |
-  { 'pending' : null } |
-  { 'delivered' : null } |
-  { 'confirmed' : null };
+export type ExternalBlob = Uint8Array;
 export interface Product {
-  'id' : string,
+  'id' : ProductId,
+  'active' : boolean,
   'name' : string,
-  'unit' : string,
-  'description' : string,
-  'stockCount' : bigint,
-  'imageUrl' : string,
-  'category' : GroceryCategory,
-  'rating' : number,
-  'priceCents' : bigint,
+  'image' : [] | [ExternalBlob],
+  'price' : Rupees,
 }
-export interface ShoppingItem {
-  'productName' : string,
-  'currency' : string,
-  'quantity' : bigint,
-  'priceInCents' : bigint,
-  'productDescription' : string,
-}
-export interface StripeConfiguration {
-  'allowedCountries' : Array<string>,
-  'secretKey' : string,
-}
-export type StripeSessionStatus = {
-    'completed' : { 'userPrincipal' : [] | [string], 'response' : string }
-  } |
-  { 'failed' : { 'error' : string } };
-export type Time = bigint;
-export interface TransformationInput {
-  'context' : Uint8Array,
-  'response' : http_request_result,
-}
-export interface TransformationOutput {
-  'status' : bigint,
-  'body' : Uint8Array,
-  'headers' : Array<http_header>,
-}
+export type ProductId = bigint;
+export type Rupees = bigint;
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
-export interface http_header { 'value' : string, 'name' : string }
-export interface http_request_result {
-  'status' : bigint,
-  'body' : Uint8Array,
-  'headers' : Array<http_header>,
+export interface _CaffeineStorageCreateCertificateResult {
+  'method' : string,
+  'blob_hash' : string,
+}
+export interface _CaffeineStorageRefillInformation {
+  'proposed_top_up_amount' : [] | [bigint],
+}
+export interface _CaffeineStorageRefillResult {
+  'success' : [] | [boolean],
+  'topped_up_amount' : [] | [bigint],
 }
 export interface _SERVICE {
+  '_caffeineStorageBlobIsLive' : ActorMethod<[Uint8Array], boolean>,
+  '_caffeineStorageBlobsToDelete' : ActorMethod<[], Array<Uint8Array>>,
+  '_caffeineStorageConfirmBlobDeletion' : ActorMethod<
+    [Array<Uint8Array>],
+    undefined
+  >,
+  '_caffeineStorageCreateCertificate' : ActorMethod<
+    [string],
+    _CaffeineStorageCreateCertificateResult
+  >,
+  '_caffeineStorageRefillCashier' : ActorMethod<
+    [[] | [_CaffeineStorageRefillInformation]],
+    _CaffeineStorageRefillResult
+  >,
+  '_caffeineStorageUpdateGatewayPrincipals' : ActorMethod<[], undefined>,
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'addProduct' : ActorMethod<[ProductId, string, Rupees], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'claimAdminIfFirst' : ActorMethod<[], boolean>,
-  'createCheckoutSession' : ActorMethod<
-    [Array<ShoppingItem>, string, string],
-    string
-  >,
-  'createOrder' : ActorMethod<
-    [Array<OrderItem>, bigint, string, string, boolean],
-    string
-  >,
-  'createProduct' : ActorMethod<[Product], undefined>,
-  'deleteProduct' : ActorMethod<[string], undefined>,
+  'deleteProduct' : ActorMethod<[ProductId], undefined>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
-  'getCategories' : ActorMethod<[], Array<GroceryCategory>>,
-  'getOrders' : ActorMethod<[], Array<Order>>,
-  'getOrdersByCustomer' : ActorMethod<[Principal], Array<Order>>,
   'getProducts' : ActorMethod<[], Array<Product>>,
-  'getProductsByCategory' : ActorMethod<[GroceryCategory], Array<Product>>,
-  'getStripeSessionStatus' : ActorMethod<[string], StripeSessionStatus>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
-  'hasAnyAdmin' : ActorMethod<[], boolean>,
-  'isCODEnabled' : ActorMethod<[], boolean>,
+  'init' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
-  'isCallerAdminOrOwner' : ActorMethod<[], boolean>,
-  'isStripeConfigured' : ActorMethod<[], boolean>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'setCODEnabled' : ActorMethod<[boolean], undefined>,
-  'setStripeConfiguration' : ActorMethod<[StripeConfiguration], undefined>,
-  'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
-  'updateOrderStatus' : ActorMethod<[string, OrderStatus], undefined>,
-  'updateProduct' : ActorMethod<[Product], undefined>,
+  'updateProduct' : ActorMethod<[ProductId, string, Rupees], undefined>,
+  'uploadProductImage' : ActorMethod<[ProductId, ExternalBlob], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

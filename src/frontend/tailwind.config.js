@@ -16,7 +16,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Plus Jakarta Sans', 'sans-serif'],
+        body: ["'Plus Jakarta Sans'", "sans-serif"],
       },
       colors: {
         border: "oklch(var(--border))",
@@ -69,14 +69,6 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
-        navy: {
-          DEFAULT: "oklch(var(--navy))",
-          dark: "oklch(var(--navy-dark))",
-        },
-        brand: {
-          green: "oklch(var(--green-brand))",
-          yellow: "oklch(var(--yellow-brand))",
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -85,7 +77,7 @@ export default {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
-        card: "0 2px 8px rgba(0,0,0,0.08)",
+        card: "0 2px 8px 0 rgba(0,0,0,0.08)",
       },
       keyframes: {
         "accordion-down": {
